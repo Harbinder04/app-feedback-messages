@@ -1,47 +1,61 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/option";
 import prisma from "@/db/src/db";
-import { User } from 'next-auth'
+import { User } from "next-auth";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request){
-    const session = await getServerSession(authOptions);
+export async function GET(req: Request) {
+  const session = await getServerSession(authOptions);
 
-    console.log(session)
+  console.log(session);
 
-    const user: User  = session?.user as User
+  const user: User = session?.user as User;
 
-    if(!session || !user){
-        return NextResponse.json({
-            success: false,
-            message: "Not Authenticated"
+  if (!session || !user) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Not Authenticated",
+      },
+      { status: 401 }
+    );
+  }
+
+  const userid = user.userid as string;
+
+  try {
+    const userWithMessages = await prisma.user.findUnique({
+      where: {
+        userid: parseInt(userid, 10),
+      },
+      include: {
+        messages: true,
+      },
+    });
+
+    if (!userWithMessages || userWithMessages.messages.length === 0) {
+      return Response.json(
+        {
+          success: false,
+          message: "User not found",
         },
-    {status: 401})
+        { status: 401 }
+      );
     }
 
-    const userid = user.userid as string;
-     const { isAcceptingMessage } = await req.json();
-
-     try{
-        const foundUser = await prisma.user.findFirst({
-            where: {
-                userid: parseInt(userid, 10)
-            },
-        })
-
-        if(!foundUser){
-            return Response.json({
-                success: false,
-                message: "User not found"
-            },
-        {status: 401})
-        }
-     }catch (error) {
-        console.error('Error checking user verification', error)
-        return Response.json({
-            success: false,
-            message: "Error while fetching Messages"
-        },
-    {status: 500})
-    }
+    return Response.json({
+        success: true,
+        message: userWithMessages.messages
+    },
+{status: 200})
+  } catch (error) {
+    console.error("Error checking user verification", error);
+    return Response.json(
+      {
+        success: false,
+        message: "Error while fetching Messages",
+      },
+      { status: 500 }
+    );
+  }
 }

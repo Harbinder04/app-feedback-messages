@@ -72,7 +72,24 @@ export async function GET(request: Request) {
     const userid = user.userid as string;
 
     try {
-        
+        const foundUser = await prisma.user.findFirst({
+            where: {
+                userid: parseInt(userid, 10)
+            },
+        })
+        if(!foundUser){
+            return Response.json({
+                success: false,
+                message: "User not found"
+            },
+        {status: 401})
+        }
+        return Response.json({
+            success: true,
+            isAcceptingMessage: foundUser.isAcceptingMessage,
+            message: "Acceptance status fetched successfully"
+        },
+    {status: 200})
     }
     catch (error) {
         console.error('Error checking user verification', error)

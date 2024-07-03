@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     const payload = req.json();
-    console.log("I get payload");
+    console.log(" get payload");
     // checking the user who signup mannually
     try {
       const verifyPayload = signUpSchema.safeParse(payload);

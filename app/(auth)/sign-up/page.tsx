@@ -2,8 +2,9 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
+import { useRouter } from "next/navigation";
 import { z } from "zod"
-import { signInSchema } from "@/schemas/signinSchema";
+import { signUpSchema } from "@/schemas/signupSchema";
 import React, { useState } from "react";
 import axios, { AxiosError } from 'axios'
 import { toast } from "@/components/ui/use-toast";
@@ -18,39 +19,40 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Loader2, Router } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import Link from 'next/link';
-import { useRouter } from "next/navigation";
 
-function Signin() {
+function Signup() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   // const router = useRouter();
-  const form = useForm<z.infer<typeof signInSchema>>({
-    resolver: zodResolver(signInSchema),
+  const form = useForm<z.infer<typeof signUpSchema>>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
+      username: "",
       email: "",
       password: "",
     }
   })
 
-  const onSubmit = async (data: z.infer<typeof signInSchema>)=>{
+  const onSubmit = async (data: z.infer<typeof signUpSchema>)=>{
     setIsSubmitting(true);
     try{
-      const response = await axios.post('/sign-in', data);
+      const response = await axios.post('/api/sign-up', data);
       toast({
         title: "Successfull",
-        description: "Sign in successfully",
+        description: response.data?.message,
+        color: "green",
         type: "foreground",
-        duration: 1000,
+        duration: 500
       })
-      console.log(response.data?.message);
-      router.push('/')
+      console.log(response.data);
+      router.push('/verify')
     }catch(error){
      const axiosError = error as AxiosError<ApiResponse>;
      let errorMessage = axiosError.response?.data.message;
      toast({
-      title: "Sign In Failed",
+      title: "Sign Up Failed",
       description : errorMessage,
       color: "red",
       variant: "destructive"
@@ -71,6 +73,19 @@ function Signin() {
           </div>
         <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <FormField
+          control={form.control}
+          name="username"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Username</FormLabel>
+              <FormControl>
+                <Input placeholder="Username" {...field} type="text" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="email"
@@ -100,13 +115,13 @@ function Signin() {
         <Button type="submit" disabled={isSubmitting}>{
           isSubmitting ? <React.Fragment>
                <Loader2 className="mr-2 h-4 w-4 animate-spin"/> Loading...
-          </React.Fragment>: "Sign In"}</Button>
+          </React.Fragment>: "Sign Up"}</Button>
       </form>
     </Form>
           <div className="text-center mt-4">
             <p>
               Already a member?{' '}
-              <Link href="/sign-up" className="text-blue-500 hover:text-blue-400">Sign Up</Link>
+              <Link href="/sign-in" className="text-blue-500 hover:text-blue-400">Sign In</Link>
             </p>
           </div>
         </div>
@@ -114,4 +129,4 @@ function Signin() {
   )
 }
 
-export default Signin
+export default Signup;

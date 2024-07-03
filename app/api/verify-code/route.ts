@@ -4,13 +4,13 @@ import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
     try {
-        const {username, code }  = await request.json()
+        const {email, code }  = await request.json()
 
-        const decodedUsername = decodeURIComponent(username)
+        const decodedEmail = decodeURIComponent(email)
         
         const user = await prisma.user.findFirst({
             where: {
-                username: decodedUsername
+                email: decodedEmail
             }
         })
 
