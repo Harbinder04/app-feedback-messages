@@ -9,23 +9,32 @@ export const authOptions: NextAuthOptions = {
             name: "Credentials",
             credentials: {
                 email: {label: "Email", type: "text", placeholder: "xyz@gmail.com"},
-                password: {label: "Password", type: "text", placeholder: "*********"}
+                password: {label: "Password", type: "password", placeholder: "*********"}
             },
-            async authorize(credentials, req): Promise<any>{
+            async authorize(credentials): Promise<any>{
+                if (!credentials) {
+                    throw new Error("No credentials provided");
+                  }
+
                 try{
+                    // console.log("reached here")
                     const user = await prisma.user.findFirst({
                         where: {
                             email: credentials?.email
-                        }
+                        },
+                        
                     });
-                    if(!user){
-                        throw new Error("No user found")
-                    }
+                    if (!user) {
+                        console.log("No user found with email:", credentials.email);
+                        throw new Error("No user found");
+                      }
 
-                    if(!user.isVerified){
-                        throw new Error("User is not verified")
-                    }
-                    const isPasswordCorrect = await bcrypt.compare(credentials?.password ? credentials.password : "", user.password);
+                      if (!user.isVerified) {
+                        console.log("User not verified:", credentials.email);
+                        throw new Error("User is not verified");
+                      }
+
+                    const isPasswordCorrect = await bcrypt.compare(credentials.password, user.password);
 
                     if(isPasswordCorrect){
                         return user;
@@ -34,7 +43,7 @@ export const authOptions: NextAuthOptions = {
                     }
                     
                 }catch(e: any){
-                    throw new Error(e);
+                    throw new Error(e.message);
                 }
             }
         })
@@ -50,7 +59,7 @@ export const authOptions: NextAuthOptions = {
             
             return token
         },
-        async session({session, token}){
+        session: async ({session, token}) => {
             if(token){
                 session.user.userid = token.userid;
                 session.user.isVerified = token.isVerified;
@@ -67,4 +76,4 @@ export const authOptions: NextAuthOptions = {
         strategy: "jwt"
     },
     secret: process.env.NEXTAUTH_SECRET_KEY
-}
+} satisfies NextAuthOptions;
