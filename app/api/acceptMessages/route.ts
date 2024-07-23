@@ -8,7 +8,7 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
     const session = await getServerSession(authOptions);
 
-    console.log(session)
+    // console.log(session)
 
     const user: User  = session?.user as User
 
@@ -40,6 +40,7 @@ export async function POST(request: Request) {
         }
         return Response.json({
             success: true,
+            isAcceptingMessage: updatedUser.isAcceptingMessage,
             message: "Acceptance status updated successfully"
         },
     {status: 200})

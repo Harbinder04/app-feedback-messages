@@ -26,21 +26,32 @@ export async function POST(req: Request) {
     if(!user.isAcceptingMessage){
         return Response.json({
             success: false,
-            message: "User not found"
+            message: "User is not acceptin messages"
         },
     {status: 403})
     }
-    const newMessage = messageSchema.safeParse(content);
-    if(newMessage){
-        user.messages.push(content)
+
+    const newMessage = messageSchema.safeParse({content});
+    if (!newMessage.success) {
+      return Response.json({
+        success: false,
+        message: 'Invalid message content',
+      }, {status: 400});
     }
-    else{
-        return Response.json({
-            success: false,
-            message: "Incorrect message format"
-        },
-    {status: 401})
-    }
+
+    // Create new message
+    const createdMessage = await prisma.message.create({
+      data: {
+        content,
+        userId: user.userid,
+      },
+    });
+
+    return Response.json({
+      success: true,
+      message: 'Message sent successfully',
+      data: createdMessage,
+    }, {status: 200});
    }catch (error) {
     console.error('Error checking user verification', error)
     return Response.json({

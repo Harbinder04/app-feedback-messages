@@ -1,11 +1,13 @@
-import Signout from "@/components/Signout";
-import { Form } from "@/components/ui/form";
+import { NavComponent } from '@/components/NavComponent'
+import React from 'react'
 
-export default function Home() {
+function page() {
   return (
     <div>
-      Home is here. 
-      <Signout />
+        <NavComponent/>
+        
     </div>
-  );
+  )
 }
+
+export default page

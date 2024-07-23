@@ -4,26 +4,25 @@ import React from 'react';
 import { signOut } from 'next-auth/react';
 import { toast } from './ui/use-toast';
 import { Button } from './ui/button';
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 
 function Signout() {
-    const router = useRouter();
+    // const router = useRouter();
 
     async function handleSubmit() {
-        await signOut({ redirect: false });
+        await signOut();
         toast({
             title: "Sign out successful",
             duration: 1000
         });
-        router.replace('/sign-in');
     }
 
     return (
-        <div>
-            <Button onClick={handleSubmit}>
+        <>
+            <Button className="w-full md:w-auto" onClick={handleSubmit}>
                 Sign out 
             </Button>
-        </div>
+        </>
     );
 }
 

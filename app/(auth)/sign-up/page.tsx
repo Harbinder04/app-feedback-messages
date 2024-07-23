@@ -46,7 +46,7 @@ function Signup() {
         duration: 500,
       });
       const userEmail = data.email;
-      console.log(response.data);
+      // console.log(response.data);
       router.push(`/verify/${userEmail}`);
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;

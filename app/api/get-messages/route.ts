@@ -7,8 +7,6 @@ import { NextResponse } from "next/server";
 export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
 
-  console.log(session);
-
   const user: User = session?.user as User;
 
   if (!session || !user) {
@@ -39,17 +37,17 @@ export async function GET(req: Request) {
           success: false,
           message: "User not found",
         },
-        { status: 401 }
+        { status: 404 }
       );
     }
-
+    // console.log(userWithMessages.messages);
     return Response.json({
         success: true,
         message: userWithMessages.messages
     },
 {status: 200})
   } catch (error) {
-    console.error("Error checking user verification", error);
+    // console.error("Error checking user verification", error);
     return Response.json(
       {
         success: false,
