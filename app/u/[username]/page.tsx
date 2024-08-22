@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useToast } from "@/components/ui/use-toast";
 import { ApiResponse } from "@/types/types";
@@ -24,19 +24,18 @@ const UsernamePage = () => {
 
   const handleSendMessage = async () => {
     try {
-      // console.log("Point check 1");
       setMessage(message);
       if (message.length <= 0) {
         setIsEmptyMessage(true);
         return;
       }
-      // console.log("Point check 2");
+      
       const response = await axios.post("/api/send-message", {
         email: username,
         content: message,
       });
-      // console.log("Point check 3");
-      if (response) {
+      
+      if (response.data.success) {
         toast({
           title: "Successfull",
           description: "Message send successfully",
@@ -60,6 +59,7 @@ const UsernamePage = () => {
       });
     }
   };
+
 
   return (
     <>

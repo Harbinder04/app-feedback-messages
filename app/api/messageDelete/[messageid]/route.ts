@@ -39,7 +39,6 @@ export async function DELETE(
           userId: parseInt(userId, 10),
         },
       });
-      console.log(response);
       if (!response) {
         return NextResponse.json(
           {
@@ -49,10 +48,20 @@ export async function DELETE(
           { status: 401 }
         );
       }
+      
+      const userMessages = await prisma.user.findUnique({
+        where: {
+          userid: parseInt(userId, 10),
+        },
+        select: {
+          messages: true,
+        },
+      })
 
       return NextResponse.json(
         {
           success: true,
+          messages: userMessages?.messages,
           message: "Deleted successfully",
         },
         { status: 200 }

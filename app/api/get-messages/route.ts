@@ -31,7 +31,7 @@ export async function GET(req: Request) {
       },
     });
 
-    if (!userWithMessages || userWithMessages.messages.length === 0) {
+    if (!userWithMessages) {
       return Response.json(
         {
           success: false,
@@ -40,7 +40,16 @@ export async function GET(req: Request) {
         { status: 404 }
       );
     }
-    // console.log(userWithMessages.messages);
+
+    if (userWithMessages.messages.length === 0){
+      return Response.json(
+        {
+          success: true,
+          message:  userWithMessages.messages,
+        },
+        { status: 200 }
+      )
+    }
     return Response.json({
         success: true,
         message: userWithMessages.messages

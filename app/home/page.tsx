@@ -49,17 +49,11 @@ function page() {
     }
   }, [setValue]);
 
-  const fetchMessages = useCallback(
-    async (refresh: boolean = false) => {
+  const fetchMessages = async (refresh: boolean = false) => {
       setIsLoading(true);
       try {
         const response = await axios.get("/api/get-messages");
-        // console.log(response.data);
         setMessages(response.data.message);
-        if (refresh) {
-          setIsLoading(true);
-          setMessages(response.data.message);
-        }
       } catch (error) {
         const axiosError = error as AxiosError<ApiResponse>;
         toast({
@@ -72,9 +66,7 @@ function page() {
       } finally {
         setIsLoading(false);
       }
-    },
-    [setMessages]
-  );
+    };
    
    //handle switch change
 
@@ -107,7 +99,7 @@ function page() {
     if (!session || !session.user) return;
     fetchMessages();
     fetchAcceptMessage();
-  }, [session, fetchMessages]);
+  }, [session]);
 
 
   return (

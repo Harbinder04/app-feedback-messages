@@ -39,8 +39,8 @@ function MessageCard({ message, setMessages }: MessageCardProps) {
   async function handleDeleteConfirm() {
     try {
       const response = await axios.delete(`/api/messageDelete/${message.id}`);
-      console.log(response.data.message);
-      setMessages(response.data.message)
+      
+      setMessages(response.data.messages)
       toast({
         title: response.data?.message,
         type: "foreground",
@@ -65,7 +65,7 @@ function MessageCard({ message, setMessages }: MessageCardProps) {
           <CardTitle>{message.content}</CardTitle>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive" className="w-fit h-auto self-end">Delete Message</Button>
+              <Button className="w-fit h-auto self-end" variant={"destructive"} >Delete Message</Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>

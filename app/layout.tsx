@@ -1,5 +1,5 @@
 import AuthProvider from "@/context/AuthProvider";
-import "./globals.css";
+import '@/app/globals.css';
 
 export const metadata = {
   title: "Anonymous Messenger",
