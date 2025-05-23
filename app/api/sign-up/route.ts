@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
           success: true,
           message: "User registered successfully. Please verify your email",
         },
-        { status: 201 }
+        { status: 200 }
       );
     }
   } catch (error) {

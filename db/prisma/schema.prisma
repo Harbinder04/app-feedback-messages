@@ -9,7 +9,7 @@ datasource db {
 }
 
 model User {
- userid Int @id @default(autoincrement())
+ user_id String @id @default(uuid())
  username String @unique
  email String @unique
  password String
@@ -21,10 +21,10 @@ model User {
 }
 
 model Message {
-  id    Int   @unique  @id @default(autoincrement())
+  id    String   @unique  @id @default(cuid())
   content String 
   createdAt DateTime @default(now())
-  user User @relation(fields: [userId], references: [userid])
-  userId Int 
+  user User @relation(fields: [userId], references: [user_id])
+  userId String 
 }
 
